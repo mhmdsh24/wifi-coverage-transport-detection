@@ -74,7 +74,7 @@ vippfinaldata/
 ### Google Drive Access
 
 All required datasets are available through the following Google Drive link:
-[WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
+[WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/1vQKn8IW6T640FIpk4j7a_UAGNGtwFIMI?usp=sharing)
 
 The Google Drive folder contains:
 - Raw data files (Hips_WiFi.csv, Hips_Location.csv, Hips_GPS.csv, Hips_Motion.csv)
