@@ -50,12 +50,16 @@ A comprehensive system for analyzing and predicting WiFi and cellular coverage u
    ```
 
 3. Download the required datasets:
-   - Access the datasets via Google Drive: [WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
-   - Place the following files in the `vippfinaldata/vippfinaldata` directory:
+   - Access the datasets via Google Drive: [WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/1vQKn8IW6T640FIpk4j7a_UAGNGtwFIMI?usp=sharing)
+   - The Google Drive folder contains two subfolders:
+     - `raw data files/`: Contains the original data files you need to run the pipeline from scratch
+     - `preprossed data files/`: Contains preprocessed data if you want to skip the initial data processing steps
+   - For full pipeline execution, download the following files from the `raw data files/` folder and place them in the `vippfinaldata/vippfinaldata` directory:
      - Hips_WiFi.csv
      - Hips_Location.csv
      - Hips_GPS.csv
      - Hips_Motion.csv
+   - For quicker testing or to skip preprocessing, you can use files from the `preprossed data files/` folder instead
    - For detailed dataset information, see [DATA.md](DATA.md)
 
 ### Running the Application
@@ -97,13 +101,24 @@ This project requires several large datasets that are not included in the Git re
 
 - **Access the datasets**: [WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/1vQKn8IW6T640FIpk4j7a_UAGNGtwFIMI?usp=sharing)
 
-Required files:
-- `Hips_WiFi.csv`: WiFi signal data
-- `Hips_Location.csv`: Location data
-- `Hips_GPS.csv`: GPS tracking data
-- `Hips_Motion.csv`: Motion sensor data
+### Google Drive Folder Structure
 
-Sample data with reduced size is also available in the Google Drive for testing purposes. See [DATA.md](DATA.md) for complete details on data requirements.
+The Google Drive folder contains:
+1. **raw data files/** - Original datasets:
+   - `Hips_WiFi.csv`: WiFi signal data
+   - `Hips_Location.csv`: Location data
+   - `Hips_GPS.csv`: GPS tracking data
+   - `Hips_Motion.csv`: Motion sensor data
+
+2. **preprossed data files/** - Pre-processed datasets to skip initial steps:
+   - `cleaned_wifi_data.csv`: Cleaned WiFi data
+   - `cleaned_location_data.csv`: Cleaned location data
+   - `cleaned_gps_data.csv`: Cleaned GPS data
+   - `merged_wifi_location.csv`: Merged WiFi and location data
+   - `grid_coverage_statistics.csv`: Coverage statistics
+   - `signal_anomalies.csv`: Detected anomalies
+
+See [DATA.md](DATA.md) for complete details on data requirements and usage.
 
 ## Developers
 

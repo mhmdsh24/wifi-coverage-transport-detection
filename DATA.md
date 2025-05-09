@@ -76,13 +76,32 @@ vippfinaldata/
 All required datasets are available through the following Google Drive link:
 [WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/1vQKn8IW6T640FIpk4j7a_UAGNGtwFIMI?usp=sharing)
 
-The Google Drive folder contains:
-- Raw data files (Hips_WiFi.csv, Hips_Location.csv, Hips_GPS.csv, Hips_Motion.csv)
-- Sample preprocessed data (for testing without running the full pipeline)
-- Reduced-size datasets for development testing
+The Google Drive folder contains two main subfolders:
+
+1. **raw data files/**: 
+   - Contains the original data files needed to run the full pipeline
+   - Includes Hips_WiFi.csv, Hips_Location.csv, Hips_GPS.csv, and Hips_Motion.csv
+   - Use these files if you want to process the data from scratch
+
+2. **preprossed data files/**: 
+   - Contains already processed data files to skip the initial data processing steps
+   - Includes cleaned data files, merged data, and analysis results
+   - Use these files if you want to skip the time-consuming preprocessing steps
+
+### Using the Data
+
+#### For Full Pipeline Processing:
+1. Download all files from the `raw data files/` folder
+2. Place them in your project's `vippfinaldata/vippfinaldata` directory
+3. Run the pipeline scripts to process the data
+
+#### For Quick Testing or Development:
+1. Download the relevant files from the `preprossed data files/` folder
+2. Place them in your project's `vippfinaldata/vippfinaldata` directory
+3. You can now skip directly to visualization or specific analysis steps
 
 ### Alternative Access
 
 For team members: The data files are also available on the internal shared drive. Please contact the project maintainers for access.
 
-For external contributors: Sample data files with a reduced number of records are available in the Google Drive folder in the "sample_data" subfolder. 
+For external contributors: If you encounter issues downloading the large files, please contact the maintainers for alternative access options. 
