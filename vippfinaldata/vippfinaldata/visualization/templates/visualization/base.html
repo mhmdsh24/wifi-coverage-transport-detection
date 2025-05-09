@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coverage Visualization{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Fonts - Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .nav-link {
+            color: #333;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9ecef;
+        }
+        
+        .nav-link i {
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .plot-img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .project-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .developer-name {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+    </style>
+    
+    {% block extrahead %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky">
+                    <div class="text-center mb-4">
+                        <div class="project-title" style="font-size: 1.8rem; font-weight: 700;">Cellular/WiFi Coverage Analysis</div>
+                        <div class="developer-name" style="font-size: 1.2rem; margin: 10px 0;">Developed by Rami Eid, Omar Kaaki, and Mohamad Chmaitily</div>
+                        <p style="font-size: 0.95rem;">Signal Coverage Prediction System</p>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{% url 'home' %}" class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                                <i class="fas fa-home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'run_pipeline' %}" class="nav-link {% if request.resolver_match.url_name == 'run_pipeline' %}active{% endif %}">
+                                <i class="fas fa-play-circle"></i> Run Pipeline
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'view_results' %}" class="nav-link {% if request.resolver_match.url_name == 'view_results' %}active{% endif %}">
+                                <i class="fas fa-chart-bar"></i> View Results
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'eda_steps' %}" class="nav-link {% if request.resolver_match.url_name == 'eda_steps' %}active{% endif %}">
+                                <i class="fas fa-search"></i> EDA Steps
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'model_detail' %}" class="nav-link {% if request.resolver_match.url_name == 'model_detail' %}active{% endif %}">
+                                <i class="fas fa-cogs"></i> Model Details
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'coverage_map' %}" class="nav-link {% if request.resolver_match.url_name == 'coverage_map' %}active{% endif %}">
+                                <i class="fas fa-map-marked-alt"></i> Coverage Maps
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'anomaly_detection' %}" class="nav-link {% if request.resolver_match.url_name == 'anomaly_detection' %}active{% endif %}">
+                                <i class="fas fa-exclamation-triangle"></i> Anomaly Detection
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'mobility_threshold' %}" class="nav-link {% if request.resolver_match.url_name == 'mobility_threshold' %}active{% endif %}">
+                                <i class="fas fa-car-side"></i> Mobility-Aware Thresholds
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{% url 'human_flow_mapping' %}" class="nav-link {% if request.resolver_match.url_name == 'human_flow_mapping' %}active{% endif %}">
+                                <i class="fas fa-people-arrows"></i> Human-Flow Mapping
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

@@ -1,0 +1,88 @@
+{% extends 'visualization/base.html' %}
+
+{% block title %}{{ title }} - Coverage Visualization{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">{{ title }}</h1>
+            <p class="lead">
+                Explore the results of exploratory data analysis on WiFi, location, and GPS data.
+                Each section focuses on different aspects of the coverage analysis.
+            </p>
+        </div>
+    </div>
+    
+    <div class="row">
+        {% for stage in eda_stages %}
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-center mb-3">
+                        <span class="fa-stack fa-2x">
+                            <i class="fas fa-circle fa-stack-2x text-primary"></i>
+                            <i class="fas fa-{{ stage.icon }} fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </div>
+                    <h5 class="card-title text-center">{{ stage.name }}</h5>
+                    <p class="card-text">{{ stage.description }}</p>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <a href="{% url stage.url %}" class="btn btn-primary">
+                        View Analysis
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">EDA Process Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        The exploratory data analysis (EDA) process followed these key steps:
+                    </p>
+                    <ol>
+                        <li>
+                            <strong>Data Cleaning and Preparation:</strong>
+                            Raw data from all sources was cleaned, missing values were handled,
+                            and outliers were identified and addressed.
+                        </li>
+                        <li>
+                            <strong>Individual Dataset Analysis:</strong>
+                            Each data source (WiFi, location, GPS) was analyzed separately to
+                            understand its characteristics, distributions, and key patterns.
+                        </li>
+                        <li>
+                            <strong>Feature Engineering:</strong>
+                            New features were created from the raw data to better capture the
+                            patterns and relationships in the data.
+                        </li>
+                        <li>
+                            <strong>Spatial Analysis:</strong>
+                            Geographical patterns and clusters were identified and mapped to
+                            understand the spatial distribution of coverage quality.
+                        </li>
+                        <li>
+                            <strong>Temporal Analysis:</strong>
+                            Time-based patterns and variations in signal quality were analyzed
+                            to understand how coverage changes over time.
+                        </li>
+                        <li>
+                            <strong>Data Integration:</strong>
+                            All data sources were merged to create a comprehensive view of the
+                            coverage patterns and prepare for modeling.
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

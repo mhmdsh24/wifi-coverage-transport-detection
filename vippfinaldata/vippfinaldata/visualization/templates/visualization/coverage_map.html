@@ -1,0 +1,344 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+
+{% block title %}WiFi Coverage Maps{% endblock %}
+
+{% block extrahead %}
+<style>
+    .map-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .map-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .map-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .map-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 15px;
+        opacity: 0;
+        transition: all 0.3s ease;
+    }
+    
+    .map-container:hover .map-overlay {
+        opacity: 1;
+    }
+    
+    .map-title {
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .map-description {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+    
+    .nav-tabs {
+        border-bottom: 2px solid #dee2e6;
+        margin-bottom: 20px;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        font-weight: 500;
+        color: #495057;
+        padding: 10px 20px;
+        margin-right: 5px;
+    }
+    
+    .nav-tabs .nav-link:hover {
+        border-color: transparent;
+        transform: none;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #007bff;
+        background-color: transparent;
+        border-bottom: 2px solid #007bff;
+    }
+    
+    .tab-content {
+        padding-top: 20px;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        margin-right: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="section-header">WiFi Coverage Prediction Maps</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'model_detail' %}" class="btn btn-primary">
+                <i class="fas fa-cogs me-2"></i>View Model Details
+            </a>
+        </div>
+    </div>
+    
+    <!-- Map Navigation Tabs -->
+    <ul class="nav nav-tabs" id="mapTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="coverage-tab" data-bs-toggle="tab" data-bs-target="#coverage" type="button" role="tab">
+                <i class="fas fa-wifi me-2"></i>Coverage Prediction
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="heatmap-tab" data-bs-toggle="tab" data-bs-target="#heatmap" type="button" role="tab">
+                <i class="fas fa-fire me-2"></i>RSSI Heatmap
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="anomaly-tab" data-bs-toggle="tab" data-bs-target="#anomaly" type="button" role="tab">
+                <i class="fas fa-exclamation-triangle me-2"></i>Anomaly Overlay
+            </button>
+        </li>
+    </ul>
+    
+    <!-- Tab Content -->
+    <div class="tab-content" id="mapTabContent">
+        <!-- Coverage Prediction Tab -->
+        <div class="tab-pane fade show active" id="coverage" role="tabpanel" aria-labelledby="coverage-tab">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="map-container">
+                        <img src="{% static 'coverage_maps/coverage_prediction_map.png' %}" class="map-image" alt="Coverage Prediction Map">
+                        <div class="map-overlay">
+                            <h5 class="map-title">WiFi Coverage Prediction</h5>
+                            <p class="map-description">Areas marked with red X indicate predicted poor WiFi coverage based on our spatial model.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Coverage Map Legend</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FF5555;"></div>
+                                <div>Poor Coverage Areas</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #55AA55;"></div>
+                                <div>Good Coverage Areas</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #5555FF;"></div>
+                                <div>WiFi Access Points</div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h6 class="fw-bold mb-3">Model Performance</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Prediction Accuracy:</span>
+                                <span class="fw-bold">86.4%</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Coverage Threshold:</span>
+                                <span class="fw-bold">-75 dBm</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Grid Resolution:</span>
+                                <span class="fw-bold">10m × 10m</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Map Usage:</strong> Use this map to identify areas where WiFi signal is predicted to be weak. These predictions are based on our machine learning model that considers various spatial and environmental factors.
+            </div>
+        </div>
+        
+        <!-- RSSI Heatmap Tab -->
+        <div class="tab-pane fade" id="heatmap" role="tabpanel" aria-labelledby="heatmap-tab">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="map-container">
+                        <img src="{% static 'coverage_maps/rssi_heatmap.png' %}" class="map-image" alt="RSSI Heatmap">
+                        <div class="map-overlay">
+                            <h5 class="map-title">RSSI Signal Strength Heatmap</h5>
+                            <p class="map-description">Color intensity represents signal strength - darker blues indicate stronger signals, while lighter colors show weaker signals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">RSSI Heatmap Legend</h5>
+                        </div>
+                        <div class="card-body">
+                            <div style="height: 200px; background: linear-gradient(to bottom, #FFFFFF, #0000FF); width: 30px; float: left; margin-right: 15px; border-radius: 4px;"></div>
+                            <div style="display: flex; flex-direction: column; justify-content: space-between; height: 200px;">
+                                <div>-30 dBm (Excellent)</div>
+                                <div>-50 dBm (Very Good)</div>
+                                <div>-65 dBm (Good)</div>
+                                <div>-75 dBm (Fair)</div>
+                                <div>-85 dBm (Poor)</div>
+                                <div>-95 dBm (Very Poor)</div>
+                            </div>
+                            <div class="clearfix"></div>
+                            
+                            <hr>
+                            
+                            <h6 class="fw-bold mb-3">Signal Statistics</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Average RSSI:</span>
+                                <span class="fw-bold">-68.2 dBm</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>RSSI Range:</span>
+                                <span class="fw-bold">-32 to -96 dBm</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Samples:</span>
+                                <span class="fw-bold">6,835</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-success mt-4">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Heatmap Usage:</strong> This heatmap shows the measured RSSI (Received Signal Strength Indicator) values across the mapped area. It represents actual signal measurements rather than predictions.
+            </div>
+        </div>
+        
+        <!-- Anomaly Overlay Tab -->
+        <div class="tab-pane fade" id="anomaly" role="tabpanel" aria-labelledby="anomaly-tab">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="map-container">
+                        <img src="{% static 'coverage_maps/anomaly_coverage_map.png' %}" class="map-image" alt="Anomaly Coverage Map">
+                        <div class="map-overlay">
+                            <h5 class="map-title">Anomaly and Coverage Overlay</h5>
+                            <p class="map-description">This map combines detected signal anomalies with coverage predictions to help identify problem zones.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">Anomaly Detection Legend</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FF5555;"></div>
+                                <div>Coverage Boundary</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FFAA00;"></div>
+                                <div>Signal Anomaly Clusters</div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background-color: #FF00FF;"></div>
+                                <div>Boundary Anomalies</div>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h6 class="fw-bold mb-3">Anomaly Statistics</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Anomalies:</span>
+                                <span class="fw-bold">2,499</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Anomaly Rate:</span>
+                                <span class="fw-bold">8.3%</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Coverage Correlation:</span>
+                                <span class="fw-bold">76.4%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning mt-4">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Overlay Usage:</strong> This visualization highlights areas where signal anomalies correlate with coverage boundaries. These transition zones often experience unstable connectivity and may require additional access points.
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{% url 'model_detail' %}" class="btn btn-lg btn-primary me-md-2">
+                    <i class="fas fa-cogs me-2"></i>View Model Results
+                </a>
+                <a href="{% url 'eda_steps' %}" class="btn btn-lg btn-success me-md-2">
+                    <i class="fas fa-search me-2"></i>View EDA Steps
+                </a>
+                <a href="{% url 'anomaly_detection' %}" class="btn btn-lg btn-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>View Anomaly Details
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+    
+    // Enlargable images
+    document.querySelectorAll('.map-image').forEach(img => {
+        img.addEventListener('click', function() {
+            if (this.classList.contains('enlarged')) {
+                this.classList.remove('enlarged');
+                this.style.maxWidth = '100%';
+                this.style.cursor = 'zoom-in';
+            } else {
+                this.classList.add('enlarged');
+                this.style.maxWidth = '150%';
+                this.style.cursor = 'zoom-out';
+            }
+        });
+        img.style.cursor = 'zoom-in';
+    });
+</script>
+{% endblock %} 

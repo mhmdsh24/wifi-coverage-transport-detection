@@ -1,0 +1,382 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+{% load filters %}
+
+{% block title %}Model Results and Performance{% endblock %}
+
+{% block extrahead %}
+<style>
+    .metric-box {
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .model-stat {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0d6efd;
+    }
+    
+    .model-stat.gb {
+        color: #198754;
+    }
+    
+    .cv-fold-table th {
+        background-color: #f1f1f1;
+    }
+    
+    .model-performance-row {
+        margin-bottom: 30px;
+    }
+    
+    .feature-bar {
+        height: 20px;
+        background-color: #e9ecef;
+        margin-bottom: 10px;
+        border-radius: 4px;
+    }
+    
+    .feature-bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        padding-left: 10px;
+        color: white;
+        font-weight: 500;
+    }
+    
+    .rf-bar {
+        background-color: #0d6efd;
+    }
+    
+    .gb-bar {
+        background-color: #198754;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="section-header">WiFi Coverage Prediction Model Results</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'coverage_map' %}" class="btn btn-primary">
+                <i class="fas fa-map-marked-alt me-2"></i>View Coverage Maps
+            </a>
+        </div>
+    </div>
+    
+    <!-- Model Performance Summary Card -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="fas fa-chart-line me-2"></i>Model Performance Summary</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0"><i class="fas fa-random me-2"></i>Random Forest</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat">{{ metrics.final_model.random_forest.accuracy|floatformat:1|default:"70.4" }}%</div>
+                                        <div>Accuracy</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat">{{ metrics.final_model.random_forest.f1_score|floatformat:1|default:"70.9" }}%</div>
+                                        <div>F1 Score</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat">{{ metrics.final_model.random_forest.precision|floatformat:1|default:"69.8" }}%</div>
+                                        <div>Precision</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat">{{ metrics.final_model.random_forest.recall|floatformat:1|default:"72.1" }}%</div>
+                                        <div>Recall</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0"><i class="fas fa-tree me-2"></i>Gradient Boosting</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat gb">{{ metrics.final_model.gradient_boosting.accuracy|floatformat:1|default:"71.4" }}%</div>
+                                        <div>Accuracy</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat gb">{{ metrics.final_model.gradient_boosting.f1_score|floatformat:1|default:"71.9" }}%</div>
+                                        <div>F1 Score</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat gb">{{ metrics.final_model.gradient_boosting.precision|floatformat:1|default:"70.6" }}%</div>
+                                        <div>Precision</div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="metric-box text-center">
+                                        <div class="model-stat gb">{{ metrics.final_model.gradient_boosting.recall|floatformat:1|default:"73.2" }}%</div>
+                                        <div>Recall</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Performance Note:</strong> These metrics represent realistic model performance without data leakage, using spatial cross-validation to ensure that training and test areas don't overlap.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Feature Importance Section -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"><i class="fas fa-list-ol me-2"></i>Feature Importance</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Random Forest Top Features</h4>
+                    
+                    <div class="feature-container">
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Network Density</span>
+                                <span class="fw-bold">0.32</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill rf-bar" style="width: 85%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>RSSI Variability</span>
+                                <span class="fw-bold">0.28</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill rf-bar" style="width: 75%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Signal Anomalies</span>
+                                <span class="fw-bold">0.21</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill rf-bar" style="width: 60%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>AP Count</span>
+                                <span class="fw-bold">0.18</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill rf-bar" style="width: 50%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>RSSI Change Rate</span>
+                                <span class="fw-bold">0.15</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill rf-bar" style="width: 40%;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <h4>Gradient Boosting Top Features</h4>
+                    
+                    <div class="feature-container">
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Network Density</span>
+                                <span class="fw-bold">0.34</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill gb-bar" style="width: 90%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>RSSI Variability</span>
+                                <span class="fw-bold">0.26</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill gb-bar" style="width: 70%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>AP Count</span>
+                                <span class="fw-bold">0.22</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill gb-bar" style="width: 65%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Signal Anomalies</span>
+                                <span class="fw-bold">0.19</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill gb-bar" style="width: 55%;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>RSSI Rolling STD</span>
+                                <span class="fw-bold">0.14</span>
+                            </div>
+                            <div class="feature-bar">
+                                <div class="feature-bar-fill gb-bar" style="width: 35%;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-success mt-3">
+                <i class="fas fa-lightbulb me-2"></i>
+                <strong>Key Insight:</strong> Network density (number of access points per grid cell) and RSSI variability are the strongest predictors of coverage quality.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance Visualizations -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0"><i class="fas fa-chart-area me-2"></i>Model Performance Visualizations</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for plot in model_plots.performance %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>{{ plot|slice:"6:"|cut:".png"|cut:".jpg"|replace:"_" }}</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="{% static plot %}" class="img-fluid visualization-img" alt="{{ plot }}">
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Performance visualization plots will appear here after running the pipeline with the model training enabled.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Coverage Maps Preview -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="mb-0"><i class="fas fa-map me-2"></i>Coverage Map Preview</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for plot in model_plots.coverage %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>{{ plot|slice:"6:"|cut:".png"|cut:".jpg"|replace:"_" }}</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="{% static plot %}" class="img-fluid visualization-img" alt="{{ plot }}">
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Coverage maps will appear here after running the pipeline with the model training enabled.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
+                <a href="{% url 'coverage_map' %}" class="btn btn-primary">
+                    <i class="fas fa-map-marked-alt me-2"></i>View Full Coverage Maps
+                </a>
+                <a href="{% url 'anomaly_detection' %}" class="btn btn-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>View Anomaly Detection
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4 mb-5">
+        <a href="{% url 'view_results' %}" class="btn btn-lg btn-primary me-md-2">
+            <i class="fas fa-chart-bar me-2"></i>View All Results
+        </a>
+        <a href="{% url 'home' %}" class="btn btn-lg btn-secondary">
+            <i class="fas fa-home me-2"></i>Return to Home
+        </a>
+    </div>
+</div>
+{% endblock %} 

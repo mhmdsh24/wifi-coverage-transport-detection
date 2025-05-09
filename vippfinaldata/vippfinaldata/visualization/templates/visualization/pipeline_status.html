@@ -1,0 +1,160 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+
+{% block title %}Pipeline Status{% endblock %}
+
+{% block extrahead %}
+<meta http-equiv="refresh" content="5" id="refresh-meta">
+<style>
+    .progress {
+        margin-bottom: 1.5rem;
+        height: 25px;
+    }
+    .progress-bar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: #fff;
+        text-align: center;
+        white-space: nowrap;
+        background-color: #0d6efd;
+        transition: width .6s ease;
+    }
+    .progress-bar-striped {
+        background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+        background-size: 1rem 1rem;
+    }
+    .progress-bar-animated {
+        animation: progress-bar-stripes 1s linear infinite;
+    }
+    @keyframes progress-bar-stripes {
+        0% { background-position-x: 1rem; }
+    }
+    
+    .status-card {
+        border-radius: 8px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .status-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card status-card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Pipeline Status</h2>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <div class="status-icon">
+                    <i class="fas {% if status.complete %}fa-check-circle text-success{% elif status.error %}fa-times-circle text-danger{% else %}fa-spinner fa-spin text-primary{% endif %}"></i>
+                </div>
+                <h3>{{ status.step|default:"Initializing..." }}</h3>
+                <p class="lead">{{ status.message }}</p>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                     role="progressbar" 
+                     style="width: {{ status.progress }}%;" 
+                     aria-valuenow="{{ status.progress }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                    {{ status.progress }}%
+                </div>
+            </div>
+            
+            <!-- Error Display -->
+            {% if status.error %}
+            <div class="alert alert-danger mt-4">
+                <h5>Error</h5>
+                <p>{{ status.error }}</p>
+            </div>
+            {% endif %}
+            
+            <!-- Complete Actions -->
+            {% if status.complete %}
+            <div class="text-center mt-4">
+                <h5 class="text-success mb-3">Pipeline execution completed successfully!</h5>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{% url 'view_results' %}" class="btn btn-success btn-lg">
+                        <i class="fas fa-chart-bar me-2"></i>View Results
+                    </a>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-home me-2"></i>Return to Home
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header bg-light">
+            <h4 class="mb-0">Pipeline Information</h4>
+        </div>
+        <div class="card-body">
+            <p>The data processing pipeline performs the following steps:</p>
+            <ol>
+                <li><strong>Data Loading</strong>: Loading and preparing WiFi and location data</li>
+                <li><strong>Data Cleaning</strong>: Removing duplicates and invalid entries</li>
+                <li><strong>Data Merging</strong>: Joining WiFi and location data by timestamp</li>
+                <li><strong>Feature Engineering</strong>: Creating features for the model</li>
+                <li><strong>Anomaly Detection</strong>: Identifying unusual signal patterns</li>
+                <li><strong>Model Training</strong>: Training machine learning models</li>
+                <li><strong>Coverage Prediction</strong>: Generating coverage prediction maps</li>
+                <li><strong>Visualization</strong>: Creating visualization outputs</li>
+            </ol>
+            
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                This process may take several minutes depending on the size of your data files.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Only set up the status checker if we're not complete or have an error
+        {% if not status.complete and not status.error %}
+        checkStatus();
+        setInterval(checkStatus, 5000);
+        {% endif %}
+    });
+    
+    function checkStatus() {
+        fetch('{% url "pipeline_status" %}', {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // If status changed, refresh the page
+            if (data.complete || data.error) {
+                window.location.reload();
+            } else {
+                // Update progress and message
+                const progressBar = document.querySelector('.progress-bar');
+                progressBar.style.width = data.progress + '%';
+                progressBar.setAttribute('aria-valuenow', data.progress);
+                progressBar.textContent = data.progress + '%';
+                
+                // Update step and message
+                document.querySelector('h3').textContent = data.step;
+                document.querySelector('.lead').textContent = data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching status:', error);
+        });
+    }
+</script>
+{% endblock %} 

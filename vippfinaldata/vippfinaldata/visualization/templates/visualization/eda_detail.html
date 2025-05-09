@@ -1,0 +1,96 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Coverage Visualization{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">{{ title }}</h1>
+            <p class="lead">
+                {{ summary|safe }}
+            </p>
+        </div>
+    </div>
+    
+    {% if not plots %}
+    <div class="alert alert-warning">
+        <i class="fas fa-exclamation-triangle"></i> No visualization plots found. 
+        Please run the EDA script first to generate visualizations.
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        {% for plot_path in plots %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        {% with plot_name=plot_path|slice:"6:"|slice:"-4" %}
+                            {{ plot_name|default:plot_path }}
+                        {% endwith %}
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static plot_path %}" alt="{{ plot_path }}" class="plot-img img-fluid">
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        Visualization generated during exploratory data analysis
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">How to Interpret These Visualizations</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        These visualizations represent different aspects of the data analysis:
+                    </p>
+                    <ul>
+                        <li><strong>Distribution plots</strong> show the frequency distribution of variables like signal strength.</li>
+                        <li><strong>Scatter plots</strong> reveal relationships between pairs of variables.</li>
+                        <li><strong>Heatmaps</strong> display signal strength variations across geographical areas.</li>
+                        <li><strong>Time series plots</strong> show how variables change over time.</li>
+                        <li><strong>Bar charts</strong> compare categorical data or aggregated metrics.</li>
+                    </ul>
+                    <p>
+                        Pay special attention to:
+                    </p>
+                    <ul>
+                        <li>Areas with consistently low signal strength (red/orange areas on heatmaps)</li>
+                        <li>Clusters of similar signal patterns</li>
+                        <li>Correlations between signal quality and other factors</li>
+                        <li>Variations in signal quality over time or across different conditions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'eda_dashboard' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to EDA Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Custom filter to replace underscores with spaces and capitalize
+    String.prototype.replace = function(search, replacement) {
+        return this.split(search).join(replacement);
+    };
+</script>
+{% endblock %} 

@@ -1,0 +1,19 @@
+{% extends 'visualization/base.html' %}
+{% load filters %}
+{% load test_filters %}
+
+{% block title %}Template Test{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Template Filters Test</h1>
+    
+    <h2>Standard Filters</h2>
+    <p>Replace filter: "hello_world"|replace:"_" = {{ "hello_world"|replace:"_" }}</p>
+    <p>Cut filter: "hello.png"|cut:".png" = {{ "hello.png"|cut:".png" }}</p>
+    <p>Slice filter: "hello_world"|slice:"1:5" = {{ "hello_world"|slice:"1:5" }}</p>
+    
+    <h2>Test Filter</h2>
+    <p>Test filter: "test"|test_filter = {{ "test"|test_filter }}</p>
+</div>
+{% endblock %} 

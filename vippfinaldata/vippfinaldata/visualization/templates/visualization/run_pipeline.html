@@ -1,0 +1,119 @@
+{% extends 'visualization/base.html' %}
+
+{% block title %}{{ title }} | Coverage Viz{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0"><i class="fas fa-cogs"></i> {{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0"><i class="fas fa-file-csv"></i> Data Files</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label for="wifi_file"><i class="fas fa-wifi"></i> WiFi Data File:</label>
+                                    <select class="form-control" id="wifi_file" name="wifi_file" required>
+                                        <option value="">-- Select WiFi Data File --</option>
+                                        {% for file in data_files.wifi %}
+                                            <option value="{{ file }}">{{ file }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="form-text text-muted">Select the CSV file containing WiFi signal data.</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="location_file"><i class="fas fa-map-marker-alt"></i> Location Data File:</label>
+                                    <select class="form-control" id="location_file" name="location_file" required>
+                                        <option value="">-- Select Location Data File --</option>
+                                        {% for file in data_files.location %}
+                                            <option value="{{ file }}">{{ file }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="form-text text-muted">Select the CSV file containing location data.</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="gps_file"><i class="fas fa-location-arrow"></i> GPS Data File (Optional):</label>
+                                    <select class="form-control" id="gps_file" name="gps_file">
+                                        <option value="">-- Select GPS Data File --</option>
+                                        {% for file in data_files.gps %}
+                                            <option value="{{ file }}">{{ file }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="form-text text-muted">Select the CSV file containing GPS data (optional).</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0"><i class="fas fa-sliders-h"></i> Parameters & Options</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label for="rssi_threshold"><i class="fas fa-signal"></i> RSSI Threshold:</label>
+                                    <input type="number" class="form-control" id="rssi_threshold" name="rssi_threshold" value="-75" step="1" required>
+                                    <small class="form-text text-muted">RSSI threshold for defining low coverage (e.g., -75 dBm).</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="sample_size"><i class="fas fa-table"></i> Sample Size (Optional):</label>
+                                    <input type="number" class="form-control" id="sample_size" name="sample_size" placeholder="Leave empty to use all data">
+                                    <small class="form-text text-muted">Number of rows to process (for testing with smaller datasets).</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="skip_eda" name="skip_eda">
+                                        <label class="form-check-label" for="skip_eda">
+                                            Skip EDA if data already processed
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="skip_anomaly" name="skip_anomaly">
+                                        <label class="form-check-label" for="skip_anomaly">
+                                            Skip anomaly detection
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="skip_model" name="skip_model">
+                                        <label class="form-check-label" for="skip_model">
+                                            Skip model training if models exist
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> The pipeline will process the data, perform exploratory data analysis,
+                    detect signal anomalies, train models, and generate coverage predictions. This process may take some time,
+                    especially with large datasets.
+                </div>
+                
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle"></i> Start Pipeline
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg ml-2">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

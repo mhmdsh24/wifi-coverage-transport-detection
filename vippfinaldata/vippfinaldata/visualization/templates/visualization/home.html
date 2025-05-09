@@ -1,0 +1,169 @@
+{% extends 'visualization/base.html' %}
+
+{% block title %}WiFi Coverage Prediction{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="jumbotron mb-4">
+        <h1 class="display-4">WiFi Coverage Prediction</h1>
+        <p class="lead">Analyze WiFi/cellular signals to predict coverage problems</p>
+    </div>
+    
+    {% if show_results %}
+    <div class="alert alert-success mb-4">
+        <h4>Pipeline completed successfully!</h4>
+        <p>The pipeline has completed execution. You can view the results below.</p>
+        <a href="{% url 'view_results' %}" class="btn btn-primary">View Results</a>
+    </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Run Pipeline</h5>
+                </div>
+                <div class="card-body">
+                    <p>Run the integrated pipeline to process data and train models.</p>
+                    <form action="{% url 'run_pipeline' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group mb-3">
+                            <label for="wifi_file">WiFi Data:</label>
+                            <select class="form-control" id="wifi_file" name="wifi_file" required>
+                                {% for file in data_files.wifi %}
+                                <option value="{{ file }}">{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="location_file">Location Data:</label>
+                            <select class="form-control" id="location_file" name="location_file" required>
+                                {% for file in data_files.location %}
+                                <option value="{{ file }}">{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="gps_file">GPS Data (optional):</label>
+                            <select class="form-control" id="gps_file" name="gps_file">
+                                <option value="">None</option>
+                                {% for file in data_files.gps %}
+                                <option value="{{ file }}">{{ file }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="rssi_threshold">RSSI Threshold (dBm):</label>
+                            <input type="number" class="form-control" id="rssi_threshold" name="rssi_threshold" value="-75" required>
+                            <small class="form-text text-muted">RSSI values below this threshold are considered low coverage.</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="sample_size">Sample Size (leave empty for full dataset):</label>
+                            <input type="number" class="form-control" id="sample_size" name="sample_size" placeholder="Optional">
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="skip_eda" name="skip_eda" {% if has_previous_runs %}checked{% endif %}>
+                            <label class="form-check-label" for="skip_eda">Skip EDA if data already processed</label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="skip_anomaly" name="skip_anomaly">
+                            <label class="form-check-label" for="skip_anomaly">Skip anomaly detection</label>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="skip_model" name="skip_model">
+                            <label class="form-check-label" for="skip_model">Skip model training if models exist</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Run Pipeline</button>
+                    </form>
+                </div>
+            </div>
+            
+            {% if has_previous_runs %}
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">View Previous Results</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p>View visualizations and results from previous pipeline runs:</p>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'view_results' %}" class="btn btn-info">View Results Dashboard</a>
+                        <a href="{% url 'eda_steps' %}" class="btn btn-outline-info">View Detailed EDA Steps</a>
+                        <a href="{% url 'model_detail' %}" class="btn btn-outline-info">View Model Performance Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Available Data</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <h6>WiFi Files ({{ data_files.wifi|length }}):</h6>
+                    <ul class="list-group">
+                        {% for file in data_files.wifi %}
+                        <li class="list-group-item">{{ file }}</li>
+                        {% empty %}
+                        <li class="list-group-item">No WiFi files found</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="col-md-4">
+                    <h6>Location Files ({{ data_files.location|length }}):</h6>
+                    <ul class="list-group">
+                        {% for file in data_files.location %}
+                        <li class="list-group-item">{{ file }}</li>
+                        {% empty %}
+                        <li class="list-group-item">No location files found</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+                <div class="col-md-4">
+                    <h6>GPS Files ({{ data_files.gps|length }}):</h6>
+                    <ul class="list-group">
+                        {% for file in data_files.gps %}
+                        <li class="list-group-item">{{ file }}</li>
+                        {% empty %}
+                        <li class="list-group-item">No GPS files found</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header bg-primary text-white">
+                <h4 class="my-0">View Results</h4>
+            </div>
+            <div class="card-body d-flex flex-column">
+                <p>View the results of your WiFi coverage analysis including coverage maps, model performance, and EDA insights.</p>
+                <div class="mt-auto">
+                    <a href="{% url 'view_results' %}" class="btn btn-primary w-100">View Results Dashboard</a>
+                    <div class="mt-2">
+                        <a href="{% url 'eda_steps' %}" class="btn btn-outline-primary w-100">Detailed EDA Steps</a>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{% url 'model_detail' %}" class="btn btn-outline-primary w-100">Model Performance Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

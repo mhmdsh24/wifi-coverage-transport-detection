@@ -1,0 +1,245 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+
+{% block title %}WiFi Signal Anomaly Detection{% endblock %}
+
+{% block extrahead %}
+<style>
+    .anomaly-chart {
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .anomaly-chart:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-card {
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-list li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 25px;
+    }
+    
+    .feature-list li:before {
+        content: "\f071";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        left: 0;
+        color: #ffc107;
+    }
+    
+    .correlation-badge {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        border-radius: 20px;
+        margin-right: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="section-header">WiFi Signal Anomaly Detection</h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'coverage_map' %}" class="btn btn-primary">
+                <i class="fas fa-map-marked-alt me-2"></i>View Coverage Maps
+            </a>
+        </div>
+    </div>
+    
+    <!-- Anomaly Detection Overview Card -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Signal Anomaly Detection Overview</h3>
+            <span class="badge bg-warning text-dark">AI-Powered Analysis</span>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-7">
+                    <h4 class="mb-3">What are Signal Anomalies?</h4>
+                    <p class="mb-3">
+                        Our WiFi signal anomaly detection system identifies unusual signal patterns that might indicate connectivity issues or infrastructure problems.
+                    </p>
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-exclamation-triangle text-warning me-2"></i>We detect the following patterns:</h5>
+                        <ul class="feature-list">
+                            <li><strong>Sudden signal drops</strong> in areas with normally strong coverage</li>
+                            <li><strong>Unexpected strong signals</strong> in areas with typically weak coverage</li>
+                            <li><strong>Rapid signal fluctuations</strong> over short time periods</li>
+                            <li><strong>Inconsistent signals</strong> from the same access point</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h5 class="mb-2"><i class="fas fa-code me-2"></i>Technical Approach</h5>
+                        <p class="mb-0">
+                            We use an <strong>Isolation Forest algorithm</strong> to detect anomalies by isolating observations 
+                            that deviate significantly from the general signal pattern distribution.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="card stat-card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0"><i class="fas fa-chart-pie me-2 text-primary"></i>Anomaly Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="metric-container">
+                                <div class="metric-box">
+                                    <div class="metric-value">95<small>th</small></div>
+                                    <div class="metric-label">Detection Threshold</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-value">2,499</div>
+                                    <div class="metric-label">Total Anomalies</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="metric-value">8.3%</div>
+                                    <div class="metric-label">Anomaly Rate</div>
+                                </div>
+                            </div>
+                            
+                            <h6 class="mt-4 mb-2">Anomaly Clustering</h6>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Temporal Clusters:</span>
+                                <span class="fw-bold">5 time periods</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Spatial Clusters:</span>
+                                <span class="fw-bold">12 regions</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>Coverage Correlation:</span>
+                                <span class="fw-bold text-primary">76.4%</span>
+                            </div>
+                            
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 76.4%" aria-valuenow="76.4" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Anomaly Visualization -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0"><i class="fas fa-chart-area me-2"></i>Anomaly Density Visualization</h3>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <img src="{% static 'anomaly_detection/grid_anomaly_density.png' %}" class="img-fluid anomaly-chart border rounded visualization-img" alt="Anomaly Density Visualization">
+                </div>
+                <div class="col-md-4">
+                    <h4 class="mb-3">Density Analysis</h4>
+                    <p>
+                        This visualization shows the spatial density of detected signal anomalies. 
+                        Brighter colors indicate higher concentrations of anomalous signal behavior.
+                    </p>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">Key Insights</h5>
+                    <div class="mb-2">
+                        <span class="correlation-badge bg-danger text-white">High Density</span>
+                        Building corners and edges
+                    </div>
+                    <div class="mb-2">
+                        <span class="correlation-badge bg-warning text-dark">Medium Density</span>
+                        Transition zones between APs
+                    </div>
+                    <div class="mb-2">
+                        <span class="correlation-badge bg-success text-white">Low Density</span>
+                        Open areas with clear LoS
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Coverage Correlation -->
+    <div class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="mb-0"><i class="fas fa-project-diagram me-2"></i>Anomaly and Coverage Correlation</h3>
+        </div>
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <img src="{% static 'anomaly_detection/anomaly_coverage_map.png' %}" class="img-fluid anomaly-chart border rounded visualization-img" alt="Anomaly and Coverage Correlation">
+                </div>
+                <div class="col-md-4">
+                    <h4 class="mb-3">Correlation Analysis</h4>
+                    <p>
+                        This visualization overlays signal anomalies with predicted low coverage areas, 
+                        revealing how anomalous signals often appear at the boundaries between good and poor coverage.
+                    </p>
+                    
+                    <div class="alert alert-info mt-4">
+                        <h5 class="mb-2"><i class="fas fa-lightbulb me-2"></i>Key Finding</h5>
+                        <p class="mb-0">
+                            <strong>76.4% of anomalies</strong> occur at coverage transition zones, suggesting these areas 
+                            experience signal instability and may require additional access points.
+                        </p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3">Recommended Actions</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-wifi text-primary me-3"></i>
+                                <div>Add access points at boundary zones</div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-broadcast-tower text-success me-3"></i>
+                                <div>Adjust power levels of existing APs</div>
+                            </li>
+                            <li class="list-group-item d-flex align-items-center">
+                                <i class="fas fa-arrows-alt text-warning me-3"></i>
+                                <div>Reposition APs for better coverage</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-12">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{% url 'coverage_map' %}" class="btn btn-lg btn-primary me-md-2">
+                    <i class="fas fa-map-marked-alt me-2"></i>View Coverage Maps
+                </a>
+                <a href="{% url 'model_detail' %}" class="btn btn-lg btn-success me-md-2">
+                    <i class="fas fa-cogs me-2"></i>View Model Details
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-lg btn-secondary">
+                    <i class="fas fa-home me-2"></i>Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

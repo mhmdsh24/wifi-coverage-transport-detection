@@ -1,0 +1,43 @@
+2025-05-08 17:47:26 - Starting integrated WiFi/cellular coverage prediction pipeline
+2025-05-08 17:47:26 - Parameters: rssi_threshold=-75, nrows=all
+2025-05-08 17:47:26 - 
+=== STEP 1: Loading Preprocessed Data ===
+2025-05-08 17:47:26 - Checking for required columns and adding if missing...
+2025-05-08 17:47:26 - Added timestamp_dt column
+2025-05-08 17:47:26 - Loaded preprocessed data: 50000 WiFi records, 7512 location records
+2025-05-08 17:47:26 - 
+=== STEP 2: Transport Mode Detection ===
+2025-05-08 17:47:26 - Detecting transport modes...
+2025-05-08 17:47:27 - Error during transport mode detection: Input y contains NaN.
+2025-05-08 17:47:27 - Continuing pipeline without transport mode information...
+2025-05-08 17:47:27 - 
+=== STEP 3: Signal Anomaly Detection ===
+2025-05-08 17:47:28 - Detected and saved 2499 signal anomalies
+2025-05-08 17:47:28 - Anomaly detection completed in 1.90 seconds
+2025-05-08 17:47:28 - 
+=== STEP 4: Threshold Sensitivity Analysis ===
+2025-05-08 17:47:29 - 
+RSSI Threshold Recommendations:
+2025-05-08 17:47:29 - 
+Analysis: all_data
+2025-05-08 17:47:29 -   10pct_coverage:
+2025-05-08 17:47:29 -     threshold: -85
+2025-05-08 17:47:29 -     coverage_pct: 8.62246081452762
+2025-05-08 17:47:29 -   25pct_coverage:
+2025-05-08 17:47:29 -     threshold: -80
+2025-05-08 17:47:29 -     coverage_pct: 22.96782317659144
+2025-05-08 17:47:29 -   50pct_coverage:
+2025-05-08 17:47:29 -     threshold: -77
+2025-05-08 17:47:29 -     coverage_pct: 48.21221460052358
+2025-05-08 17:47:29 - Threshold sensitivity analysis completed in 0.15 seconds
+2025-05-08 17:47:29 - 
+=== STEP 5: Coverage Prediction Modeling ===
+2025-05-08 17:47:29 - Training coverage prediction models...
+2025-05-08 17:47:29 - Model training completed. Full output saved to demo_output/model_training_output.txt
+2025-05-08 17:47:29 - 
+=== STEP 6: Enhanced Coverage Prediction and Visualization ===
+2025-05-08 17:47:29 - Error during prediction and visualization: Can only use .dt accessor with datetimelike values
+2025-05-08 17:47:29 - 
+Total pipeline execution time: 2.93 seconds (0.05 minutes)
+2025-05-08 17:47:29 - 
+=== Pipeline Completed Successfully ===

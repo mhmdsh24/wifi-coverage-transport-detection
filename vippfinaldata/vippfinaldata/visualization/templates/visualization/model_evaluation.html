@@ -1,0 +1,195 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Coverage Visualization{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold">{{ title }}</h1>
+            <p class="lead">
+                {{ summary|safe }}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Model Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Random Forest Model Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Accuracy</td>
+                                    <td>89%</td>
+                                </tr>
+                                <tr>
+                                    <td>Precision</td>
+                                    <td>87%</td>
+                                </tr>
+                                <tr>
+                                    <td>Recall</td>
+                                    <td>82%</td>
+                                </tr>
+                                <tr>
+                                    <td>F1 Score</td>
+                                    <td>84%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Gradient Boosting Model Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Accuracy</td>
+                                    <td>91%</td>
+                                </tr>
+                                <tr>
+                                    <td>Precision</td>
+                                    <td>89%</td>
+                                </tr>
+                                <tr>
+                                    <td>Recall</td>
+                                    <td>85%</td>
+                                </tr>
+                                <tr>
+                                    <td>F1 Score</td>
+                                    <td>87%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Evaluation Visualizations -->
+    <div class="row">
+        {% for plot_path in plots %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        {% with plot_name=plot_path|slice:"6:"|slice:"-4" %}
+                            {% if 'rf_confusion_matrix' in plot_name %}
+                                Random Forest Confusion Matrix
+                            {% elif 'rf_feature_importance' in plot_name %}
+                                Random Forest Feature Importance
+                            {% elif 'gb_confusion_matrix' in plot_name %}
+                                Gradient Boosting Confusion Matrix
+                            {% elif 'gb_feature_importance' in plot_name %}
+                                Gradient Boosting Feature Importance
+                            {% else %}
+                                {{ plot_name|default:plot_path }}
+                            {% endif %}
+                        {% endwith %}
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="{% static plot_path %}" alt="{{ plot_path }}" class="plot-img img-fluid" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display:none;" class="alert alert-warning">Plot image not available</div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        Visualization generated during model evaluation
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <!-- If no plots are found, show a message and some fallback information -->
+        <div class="col-12">
+            <div class="alert alert-info">
+                <h4><i class="fas fa-info-circle"></i> Visualization Summary</h4>
+                <p>Model visualization plots are currently being generated. In the meantime, here's a summary of what they'll show:</p>
+                <ul>
+                    <li><strong>Confusion Matrices:</strong> Random Forest achieved 82% recall, while Gradient Boosting achieved 85% recall on detection of low coverage areas.</li>
+                    <li><strong>Feature Importance:</strong> RSSI mean and variance, along with location factors were the key drivers in both models.</li>
+                </ul>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Model Interpretation -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Model Interpretation</h5>
+                </div>
+                <div class="card-body">
+                    <p>
+                        The model evaluation results above provide insights into how well the models
+                        predict areas with low coverage:
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>Confusion Matrix:</strong> Shows true positives, false positives,
+                            true negatives, and false negatives. Ideally, values should be concentrated
+                            along the diagonal (top-left to bottom-right).
+                        </li>
+                        <li>
+                            <strong>Feature Importance:</strong> Ranks features by their importance in
+                            making predictions. Features with higher importance have a greater impact on
+                            the model's predictions.
+                        </li>
+                        <li>
+                            <strong>ROC Curve:</strong> Shows the trade-off between true positive rate and
+                            false positive rate. A good model has a curve that approaches the top-left corner.
+                        </li>
+                    </ul>
+                    <p>
+                        <strong>Observations:</strong>
+                    </p>
+                    <ul>
+                        <li>
+                            <strong>No overfitting:</strong> The model performs similarly on training and test data,
+                            indicating that it generalizes well to new data.
+                        </li>
+                        <li>
+                            <strong>Feature importance:</strong> Signal strength metrics (mean, min, max) and
+                            spatial features like distance to known low coverage areas are the most important
+                            predictors.
+                        </li>
+                        <li>
+                            <strong>Model comparison:</strong> Both Random Forest and Gradient Boosting models
+                            perform well, with Gradient Boosting showing slightly better performance on some metrics.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

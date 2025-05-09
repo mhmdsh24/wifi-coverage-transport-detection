@@ -1,0 +1,50 @@
+{% extends 'visualization/base.html' %}
+
+{% block title %}{{ title }} | Coverage Viz{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0"><i class="fas fa-chart-line"></i> {{ title }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info mb-4">
+                <i class="fas fa-info-circle"></i> This will run only the Exploratory Data Analysis (EDA) step of the pipeline.
+                This process analyzes the data, generates various visualizations, and prepares the data for the next steps.
+            </div>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0"><i class="fas fa-cogs"></i> EDA Options</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="nrows"><i class="fas fa-table"></i> Sample Size (Optional):</label>
+                            <input type="number" class="form-control" id="nrows" name="nrows" placeholder="Leave empty to use all data">
+                            <small class="form-text text-muted">Number of rows to process (for testing with smaller datasets).</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> The EDA process may take some time, especially with large datasets.
+                    Once started, please wait for the process to complete.
+                </div>
+                
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-play-circle"></i> Start EDA Process
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg ml-2">
+                        <i class="fas fa-times-circle"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

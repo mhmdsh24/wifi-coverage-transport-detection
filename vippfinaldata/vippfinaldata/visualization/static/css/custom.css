@@ -1,0 +1,232 @@
+/* Custom CSS for WiFi Coverage Analysis Visualization */
+
+/* General Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Enhanced Cards */
+.card {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-bottom: 25px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    font-weight: 600;
+    padding: 15px 20px;
+}
+
+/* Navigation Enhancement */
+.nav-link {
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+
+.nav-link.active {
+    background-color: #007bff;
+    color: white !important;
+}
+
+.nav-link.active i {
+    color: white;
+}
+
+/* Visualization Images */
+.visualization-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.visualization-img:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Section Headers */
+.section-header {
+    border-left: 5px solid #007bff;
+    padding-left: 15px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Statistics Cards */
+.stat-card {
+    padding: 20px;
+    text-align: center;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    background-color: #e9ecef;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Tables */
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Quick Navigation */
+.quick-nav {
+    position: sticky;
+    top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.quick-nav-title {
+    font-weight: 600;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.quick-nav-link {
+    display: block;
+    padding: 5px 0;
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.quick-nav-link:hover {
+    color: #007bff;
+    transform: translateX(5px);
+}
+
+/* Alert Styling */
+.alert {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Progress Bars */
+.progress {
+    height: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+/* Metrics Display */
+.metric-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.metric-box {
+    flex: 1;
+    min-width: 150px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.metric-box:hover {
+    background-color: #e9ecef;
+    transform: translateY(-3px);
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Feature Importance */
+.feature-bar {
+    height: 25px;
+    margin-bottom: 10px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.feature-value {
+    height: 100%;
+    background-color: #007bff;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 15px;
+    }
+    
+    .metric-box {
+        min-width: 120px;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+    }
+} 

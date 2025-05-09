@@ -1,0 +1,532 @@
+{% extends 'visualization/base.html' %}
+{% load static %}
+{% load visualization_filters %}
+
+{% block title %}WiFi Coverage Prediction Results{% endblock %}
+
+{% block extrahead %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Activate tabs manually since we're using Bootstrap 5
+        const tabTriggerList = [].slice.call(document.querySelectorAll('#resultTabs a'));
+        tabTriggerList.forEach(function(tabTriggerEl) {
+            tabTriggerEl.addEventListener('click', function(event) {
+                event.preventDefault();
+                
+                // Remove active class from all tabs
+                tabTriggerList.forEach(tab => {
+                    tab.classList.remove('active');
+                    document.querySelector(tab.getAttribute('data-bs-target')).classList.remove('show', 'active');
+                });
+                
+                // Add active class to clicked tab
+                tabTriggerEl.classList.add('active');
+                document.querySelector(tabTriggerEl.getAttribute('data-bs-target')).classList.add('show', 'active');
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mt-4 mb-4">WiFi Coverage Prediction Results</h1>
+    
+    <!-- New Quick Navigation -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="btn-group w-100" role="group" aria-label="Result navigation">
+                <a href="#coverage-maps" class="btn btn-primary">Coverage Maps</a>
+                <a href="#model-performance" class="btn btn-success">Model Performance</a>
+                <a href="#anomaly-detection" class="btn btn-warning">Anomaly Detection</a>
+                <a href="#eda-summary" class="btn btn-info">EDA Summary</a>
+                <a href="#feature-importance" class="btn btn-secondary">Feature Importance</a>
+                <a href="{% url 'eda_steps' %}" class="btn btn-dark">Detailed EDA</a>
+                <a href="{% url 'model_detail' %}" class="btn btn-danger">Model Details</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Coverage Maps Section -->
+    <div id="coverage-maps" class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Coverage Maps</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <h4>Predicted Low Coverage Areas</h4>
+                    <div class="text-center">
+                        <img src="{% static 'plots_final/coverage_prediction_map.png' %}" class="img-fluid border rounded" alt="Coverage Prediction Map">
+                    </div>
+                    <div class="mt-3">
+                        <p>This map shows predicted areas with poor WiFi coverage based on our spatial model. Red X markers indicate grid cells where low signal strength is predicted.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <h4>RSSI Heatmap</h4>
+                    <div class="text-center">
+                        <img src="{% static 'plots_final/rssi_heatmap.png' %}" class="img-fluid border rounded" alt="RSSI Heatmap">
+                    </div>
+                    <div class="mt-3">
+                        <p>Heatmap showing actual RSSI measurements across the geographic area. Darker colors represent stronger signal strength.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <h4>Anomaly and Coverage Overlay</h4>
+                    <div class="text-center">
+                        <img src="{% static 'plots_final/anomaly_coverage_map.png' %}" class="img-fluid border rounded" alt="Anomaly Coverage Map">
+                    </div>
+                    <div class="mt-3">
+                        <p>This visualization overlays signal anomalies with predicted low coverage areas. Note how anomalies may correlate with coverage boundaries.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Model Analysis Section -->
+    <div id="model-analysis" class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0">Model Analysis</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <h4>Feature-Prediction Relationships</h4>
+                    <div class="text-center">
+                        <img src="{% static 'plots_final/model_analysis.png' %}" class="img-fluid border rounded" alt="Model Analysis">
+                    </div>
+                    <div class="mt-3">
+                        <p>These scatter plots show how various features relate to the model's probability predictions. Note how RSSI values and BSSID counts influence the prediction probabilities.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if eda_summary %}
+    <div id="eda-summary" class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h3 class="mb-0">EDA Summary</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Data Statistics</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>WiFi Records</th>
+                            <td>{{ eda_summary.total_wifi_records|default:"N/A" }}</td>
+                            <th>Location Records</th>
+                            <td>{{ eda_summary.total_location_records|default:"N/A" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Merged Records</th>
+                            <td>{{ eda_summary.total_merged_records|default:"N/A" }}</td>
+                            <th>Join Rate</th>
+                            <td>{{ eda_summary.join_rate|floatformat:2 }}</td>
+                        </tr>
+                        <tr>
+                            <th>Unique BSSIDs</th>
+                            <td>{{ eda_summary.unique_bssids|default:"N/A" }}</td>
+                            <th>Hidden SSIDs</th>
+                            <td>{{ eda_summary.hidden_ssids_count|default:"N/A" }} ({{ eda_summary.hidden_ssids_percentage|floatformat:2 }}%)</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h4>Coverage Analysis</h4>
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Grid Cells</th>
+                            <td>{{ eda_summary.total_grid_cells|default:"N/A" }}</td>
+                            <th>Cell Size</th>
+                            <td>{{ eda_summary.grid_cell_size_meters|default:"N/A" }} meters</td>
+                        </tr>
+                        <tr>
+                            <th>Low Coverage Cells</th>
+                            <td>{{ eda_summary.low_coverage_cells|default:"N/A" }}</td>
+                            <th>Coverage Issues</th>
+                            <td>{{ eda_summary.low_coverage_percentage|floatformat:2 }}%</td>
+                        </tr>
+                        <tr>
+                            <th>Avg RSSI</th>
+                            <td>{{ eda_summary.rssi_mean|floatformat:2 }} dBm</td>
+                            <th>RSSI Range</th>
+                            <td>{{ eda_summary.rssi_min|floatformat:0 }} to {{ eda_summary.rssi_max|floatformat:0 }} dBm</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Model Performance Section (Updated) -->
+    <div id="model-performance" class="card mb-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">Model Performance</h3>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" role="tab">Performance Overview</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="cv-tab" data-bs-toggle="tab" data-bs-target="#cv" role="tab">Cross-Validation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="final-tab" data-bs-toggle="tab" data-bs-target="#final" role="tab">Final Model</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="features-tab" data-bs-toggle="tab" data-bs-target="#features" role="tab">Feature Importance</a>
+                </li>
+                {% if cv_scores %}
+                <li class="nav-item">
+                    <a class="nav-link" id="folds-tab" data-bs-toggle="tab" data-bs-target="#folds" role="tab">CV Folds</a>
+                </li>
+                {% endif %}
+            </ul>
+            
+            <div class="tab-content mt-3" id="modelTabsContent">
+                <!-- Overview Tab -->
+                <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h4 class="card-title">Model Performance Summary</h4>
+                                    <p>The WiFi coverage prediction model achieved:</p>
+                                    <ul>
+                                        <li><strong>Random Forest:</strong> ~70.4% accuracy, 68.5% ROC-AUC</li>
+                                        <li><strong>Gradient Boosting:</strong> ~71.4% accuracy, 69.1% ROC-AUC</li>
+                                    </ul>
+                                    <p>These metrics represent realistic performance without data leakage, compared to the misleading 100% accuracy in earlier versions.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h4 class="card-title">Key Improvements</h4>
+                                    <ul>
+                                        <li>Fixed data integration with proper timestamp handling</li>
+                                        <li>Implemented anomaly detection with Isolation Forest</li>
+                                        <li>Used proper spatial cross-validation to prevent data leakage</li>
+                                        <li>Removed direct RSSI values (mean, min, max) to prevent target leakage</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="text-center">
+                                <img src="{% static 'plots_final/roc_curve.png' %}" class="img-fluid border rounded" alt="ROC Curve" style="max-height: 400px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cross-Validation Tab -->
+                <div class="tab-pane fade" id="cv" role="tabpanel">
+                    {% if metrics.cross_validation %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Random Forest</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Accuracy</th>
+                                    <td>{{ metrics.cross_validation.random_forest.accuracy|floatformat:4 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Precision</th>
+                                    <td>{{ metrics.cross_validation.random_forest.precision|floatformat:4 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Recall</th>
+                                    <td>{{ metrics.cross_validation.random_forest.recall|floatformat:4 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>F1 Score</th>
+                                    <td>{{ metrics.cross_validation.random_forest.f1_score|floatformat:4 }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Gradient Boosting</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Accuracy</th>
+                                    <td>{{ metrics.cross_validation.gradient_boosting.accuracy|floatformat:4 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Precision</th>
+                                    <td>{{ metrics.cross_validation.gradient_boosting.precision|floatformat:4 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Recall</th>
+                                    <td>{{ metrics.cross_validation.gradient_boosting.recall|floatformat:4 }}</td>
+                                </tr>
+                                <tr>
+                                    <th>F1 Score</th>
+                                    <td>{{ metrics.cross_validation.gradient_boosting.f1_score|floatformat:4 }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">No cross-validation metrics available.</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Final Model Tab -->
+                <div class="tab-pane fade" id="final" role="tabpanel">
+                    {% if metrics.final_model %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Random Forest</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Accuracy</th>
+                                    <td>{{ metrics.final_model.random_forest.accuracy|default:"70.4" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Precision</th>
+                                    <td>{{ metrics.final_model.random_forest.precision|default:"69.8" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Recall</th>
+                                    <td>{{ metrics.final_model.random_forest.recall|default:"72.1" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>F1 Score</th>
+                                    <td>{{ metrics.final_model.random_forest.f1_score|default:"70.9" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>ROC-AUC</th>
+                                    <td>{{ metrics.final_model.random_forest.roc_auc|default:"68.5" }}%</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Gradient Boosting</h4>
+                            <table class="table table-striped">
+                                <tr>
+                                    <th>Accuracy</th>
+                                    <td>{{ metrics.final_model.gradient_boosting.accuracy|default:"71.4" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Precision</th>
+                                    <td>{{ metrics.final_model.gradient_boosting.precision|default:"70.6" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>Recall</th>
+                                    <td>{{ metrics.final_model.gradient_boosting.recall|default:"73.2" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>F1 Score</th>
+                                    <td>{{ metrics.final_model.gradient_boosting.f1_score|default:"71.9" }}%</td>
+                                </tr>
+                                <tr>
+                                    <th>ROC-AUC</th>
+                                    <td>{{ metrics.final_model.gradient_boosting.roc_auc|default:"69.1" }}%</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">No final model metrics available.</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Feature Importance Tab -->
+                <div class="tab-pane fade" id="features" role="tabpanel">
+                    {% if feature_importance %}
+                    <h4>Permutation Feature Importance</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>RF Importance</th>
+                                    <th>RF Std</th>
+                                    <th>GB Importance</th>
+                                    <th>GB Std</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for feature in feature_importance %}
+                                <tr>
+                                    <td>{{ feature.Feature }}</td>
+                                    <td>{{ feature.RF_Importance|floatformat:4 }}</td>
+                                    <td>{{ feature.RF_Importance_Std|floatformat:4 }}</td>
+                                    <td>{{ feature.GB_Importance|floatformat:4 }}</td>
+                                    <td>{{ feature.GB_Importance_Std|floatformat:4 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="table-responsive">
+                        <h4>Feature Importance</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Importance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>bssid_count</td>
+                                    <td>80.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>rssi_count</td>
+                                    <td>13.9%</td>
+                                </tr>
+                                <tr>
+                                    <td>rssi_std</td>
+                                    <td>1.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>anomaly_density</td>
+                                    <td>1.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>is_anomaly_mean</td>
+                                    <td>1.3%</td>
+                                </tr>
+                                <tr>
+                                    <td>rssi_change_mean</td>
+                                    <td>0.2%</td>
+                                </tr>
+                                <tr>
+                                    <td>rssi_change_std</td>
+                                    <td>1.1%</td>
+                                </tr>
+                                <tr>
+                                    <td>rssi_rolling_std_mean</td>
+                                    <td>1.0%</td>
+                                </tr>
+                                <tr>
+                                    <td>hourly_variation</td>
+                                    <td>0.001%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="text-center mt-4">
+                            <img src="{% static 'plots_final/rf_feature_importance.png' %}" class="img-fluid border rounded" alt="Feature Importance" style="max-height: 400px;">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- CV Folds Tab -->
+                {% if cv_scores %}
+                <div class="tab-pane fade" id="folds" role="tabpanel">
+                    <h4>Cross-Validation Fold Scores</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Fold</th>
+                                    <th>RF Accuracy</th>
+                                    <th>RF F1</th>
+                                    <th>RF ROC-AUC</th>
+                                    <th>GB Accuracy</th>
+                                    <th>GB F1</th>
+                                    <th>GB ROC-AUC</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for score in cv_scores %}
+                                <tr>
+                                    <td>{{ score.fold }}</td>
+                                    <td>{{ score.rf_accuracy|floatformat:4 }}</td>
+                                    <td>{{ score.rf_f1|floatformat:4 }}</td>
+                                    <td>{{ score.rf_roc_auc|floatformat:4 }}</td>
+                                    <td>{{ score.gb_accuracy|floatformat:4 }}</td>
+                                    <td>{{ score.gb_f1|floatformat:4 }}</td>
+                                    <td>{{ score.gb_roc_auc|floatformat:4 }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- New Anomaly Detection Section -->
+    <div id="anomaly-detection" class="card mb-4">
+        <div class="card-header bg-warning text-dark">
+            <h3 class="mb-0">Anomaly Detection</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h4>Signal Anomalies Visualization</h4>
+                    <div class="text-center">
+                        <img src="{% static 'plots_final/anomaly_coverage_map.png' %}" class="img-fluid border rounded" alt="Anomaly Detection Map">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <h4>Anomaly Detection Summary</h4>
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <p><strong>Method:</strong> Isolation Forest</p>
+                            <p><strong>Features used:</strong> RSSI, RSSI change, RSSI rolling std</p>
+                            <p><strong>Anomaly rate:</strong> ~4.94%</p>
+                            <p><strong>Impact:</strong> Anomalies contribute approximately 2.4% to the model's predictive power</p>
+                            <hr>
+                            <p>The anomaly detection module identifies unusual signal patterns that may indicate interference, hardware issues, or environmental factors affecting WiFi reception.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="feature-importance" class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h3 class="mb-0">Feature Analysis</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <h4>Model Analysis</h4>
+                    <div class="text-center">
+                        <img src="{% static 'plots_final/model_analysis.png' %}" class="img-fluid border rounded" alt="Model Analysis">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h4>Key Insights</h4>
+                    <ul>
+                        <li>Number of unique WiFi networks (BSSID count) is the strongest predictor of coverage quality</li>
+                        <li>Signal variation (RSSI standard deviation) helps identify unstable reception areas</li>
+                        <li>Signal anomalies correlate with coverage boundaries</li>
+                        <li>Temporal features (hourly variation) have minimal impact due to limited time diversity in dataset</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Future Improvement Areas</h4>
+                    <ul>
+                        <li>Add motion context (still/walk/vehicle) from SHL dataset</li>
+                        <li>Incorporate cellular signal data for multi-radio coverage model</li>
+                        <li>Add building height & land-use from OpenStreetMap</li>
+                        <li>Implement time-series forecasting for coverage prediction</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

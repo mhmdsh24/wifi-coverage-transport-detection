@@ -1,0 +1,15 @@
+{% extends 'visualization/base.html' %}
+{% load filters %}
+{% load simple_tags %}
+
+{% block title %}Minimal Test{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Minimal Template Test</h1>
+    <p>Replace filter: {{ "test_value"|replace:"_" }}</p>
+    <p>Cut filter: {{ "test.png"|cut:".png" }}</p>
+    <p>Slice filter: {{ "test_value"|slice:"0:4" }}</p>
+    <p>Simple tag: {% hello_world %}</p>
+</div>
+{% endblock %} 
