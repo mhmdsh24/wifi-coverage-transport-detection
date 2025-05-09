@@ -49,12 +49,14 @@ A comprehensive system for analyzing and predicting WiFi and cellular coverage u
    pip install -r vippfinaldata/requirements.txt
    ```
 
-3. Download the required datasets (not included in the repository due to size):
-   - Place the following files in the `vippfinaldata` directory:
+3. Download the required datasets:
+   - Access the datasets via Google Drive: [WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
+   - Place the following files in the `vippfinaldata/vippfinaldata` directory:
      - Hips_WiFi.csv
      - Hips_Location.csv
      - Hips_GPS.csv
      - Hips_Motion.csv
+   - For detailed dataset information, see [DATA.md](DATA.md)
 
 ### Running the Application
 
@@ -91,12 +93,17 @@ A comprehensive system for analyzing and predicting WiFi and cellular coverage u
 
 ## Data Requirements
 
-This project requires several large datasets that are not included in the Git repository. You'll need to obtain these separately and place them in the appropriate directory:
+This project requires several large datasets that are not included in the Git repository. These datasets are available via Google Drive:
 
+- **Access the datasets**: [WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
+
+Required files:
 - `Hips_WiFi.csv`: WiFi signal data
 - `Hips_Location.csv`: Location data
 - `Hips_GPS.csv`: GPS tracking data
 - `Hips_Motion.csv`: Motion sensor data
+
+Sample data with reduced size is also available in the Google Drive for testing purposes. See [DATA.md](DATA.md) for complete details on data requirements.
 
 ## Developers
 

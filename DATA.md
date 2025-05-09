@@ -71,6 +71,18 @@ vippfinaldata/
 
 ## Obtaining the Data
 
-For team members: The data files are available on the shared drive. Please contact the project maintainers for access.
+### Google Drive Access
 
-For external contributors: Sample data files with a reduced number of records are available upon request for development and testing purposes. 
+All required datasets are available through the following Google Drive link:
+[WiFi Coverage Analysis Datasets](https://drive.google.com/drive/folders/YOUR_FOLDER_ID)
+
+The Google Drive folder contains:
+- Raw data files (Hips_WiFi.csv, Hips_Location.csv, Hips_GPS.csv, Hips_Motion.csv)
+- Sample preprocessed data (for testing without running the full pipeline)
+- Reduced-size datasets for development testing
+
+### Alternative Access
+
+For team members: The data files are also available on the internal shared drive. Please contact the project maintainers for access.
+
+For external contributors: Sample data files with a reduced number of records are available in the Google Drive folder in the "sample_data" subfolder. 
