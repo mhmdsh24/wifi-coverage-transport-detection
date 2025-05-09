@@ -1,0 +1,65 @@
+[
+  {
+    "Feature": "bssid_count",
+    "RF_Importance": 0.803,
+    "GB_Importance": 0.782,
+    "RF_Importance_Std": 0.006467903667112946,
+    "GB_Importance_Std": 0.004961372443656412
+  },
+  {
+    "Feature": "rssi_count",
+    "RF_Importance": 0.139,
+    "GB_Importance": 0.144,
+    "RF_Importance_Std": 0.0025347171131856238,
+    "GB_Importance_Std": 0.0020983441136030096
+  },
+  {
+    "Feature": "rssi_std",
+    "RF_Importance": 0.011,
+    "GB_Importance": 0.014,
+    "RF_Importance_Std": 0.0015854643368675156,
+    "GB_Importance_Std": 0.005456592191001432
+  },
+  {
+    "Feature": "anomaly_density",
+    "RF_Importance": 0.011,
+    "GB_Importance": 0.013,
+    "RF_Importance_Std": 0.00953996983528,
+    "GB_Importance_Std": 0.0013094966900369656
+  },
+  {
+    "Feature": "is_anomaly_mean",
+    "RF_Importance": 0.013,
+    "GB_Importance": 0.016,
+    "RF_Importance_Std": 0.009690688297671037,
+    "GB_Importance_Std": 0.00918388361870904
+  },
+  {
+    "Feature": "rssi_change_mean",
+    "RF_Importance": 0.002,
+    "GB_Importance": 0.003,
+    "RF_Importance_Std": 0.008275576133048152,
+    "GB_Importance_Std": 0.0033290198344001526
+  },
+  {
+    "Feature": "rssi_change_std",
+    "RF_Importance": 0.011,
+    "GB_Importance": 0.015,
+    "RF_Importance_Std": 0.0037415239225603364,
+    "GB_Importance_Std": 0.006962700559185839
+  },
+  {
+    "Feature": "rssi_rolling_std_mean",
+    "RF_Importance": 0.01,
+    "GB_Importance": 0.013,
+    "RF_Importance_Std": 0.001879049026057455,
+    "GB_Importance_Std": 0.0038053996848046987
+  },
+  {
+    "Feature": "hourly_variation",
+    "RF_Importance": 1e-05,
+    "GB_Importance": 1e-05,
+    "RF_Importance_Std": 0.007158097238609413,
+    "GB_Importance_Std": 0.0056806121906002975
+  }
+]

@@ -1,0 +1,31 @@
+{
+    "cross_validation": {
+        "fold": 3.0,
+        "rf_accuracy": 1.0,
+        "rf_precision": 1.0,
+        "rf_recall": 1.0,
+        "rf_f1": 1.0,
+        "rf_roc_auc": 1.0,
+        "gb_accuracy": 1.0,
+        "gb_precision": 1.0,
+        "gb_recall": 1.0,
+        "gb_f1": 1.0,
+        "gb_roc_auc": 1.0
+    },
+    "final_model": {
+        "random_forest": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+        },
+        "gradient_boosting": {
+            "accuracy": 1.0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1_score": 1.0,
+            "roc_auc": 1.0
+        }
+    }
+}

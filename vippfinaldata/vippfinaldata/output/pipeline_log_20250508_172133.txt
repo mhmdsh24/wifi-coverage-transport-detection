@@ -1,0 +1,43 @@
+2025-05-08 17:21:33 - Starting integrated WiFi/cellular coverage prediction pipeline
+2025-05-08 17:21:33 - Parameters: rssi_threshold=-75.0, nrows=all
+2025-05-08 17:21:33 - 
+=== STEP 1: Loading Preprocessed Data ===
+2025-05-08 17:21:34 - Checking for required columns and adding if missing...
+2025-05-08 17:21:34 - Added timestamp_dt column
+2025-05-08 17:21:34 - Loaded preprocessed data: 50000 WiFi records, 7512 location records
+2025-05-08 17:21:34 - 
+=== STEP 2: Transport Mode Detection ===
+2025-05-08 17:21:34 - Detecting transport modes...
+2025-05-08 17:21:35 - Error during transport mode detection: Input y contains NaN.
+2025-05-08 17:21:35 - Continuing pipeline without transport mode information...
+2025-05-08 17:21:35 - 
+=== STEP 3: Signal Anomaly Detection ===
+2025-05-08 17:21:39 - Detected and saved 2499 signal anomalies
+2025-05-08 17:21:40 - Anomaly detection completed in 4.85 seconds
+2025-05-08 17:21:40 - 
+=== STEP 4: Threshold Sensitivity Analysis ===
+2025-05-08 17:21:40 - 
+RSSI Threshold Recommendations:
+2025-05-08 17:21:40 - 
+Analysis: all_data
+2025-05-08 17:21:40 -   10pct_coverage:
+2025-05-08 17:21:40 -     threshold: -85
+2025-05-08 17:21:40 -     coverage_pct: 8.62246081452762
+2025-05-08 17:21:40 -   25pct_coverage:
+2025-05-08 17:21:40 -     threshold: -80
+2025-05-08 17:21:40 -     coverage_pct: 22.96782317659144
+2025-05-08 17:21:40 -   50pct_coverage:
+2025-05-08 17:21:40 -     threshold: -77
+2025-05-08 17:21:40 -     coverage_pct: 48.21221460052358
+2025-05-08 17:21:40 - Threshold sensitivity analysis completed in 0.26 seconds
+2025-05-08 17:21:40 - 
+=== STEP 5: Coverage Prediction Modeling ===
+2025-05-08 17:21:40 - Training coverage prediction models...
+2025-05-08 17:21:40 - Model training completed. Full output saved to C:\Users\User\Desktop\vippfinaldata\vippfinaldata\output/model_training_output.txt
+2025-05-08 17:21:40 - 
+=== STEP 6: Enhanced Coverage Prediction and Visualization ===
+2025-05-08 17:21:40 - Error during prediction and visualization: Can only use .dt accessor with datetimelike values
+2025-05-08 17:21:40 - 
+Total pipeline execution time: 6.99 seconds (0.12 minutes)
+2025-05-08 17:21:40 - 
+=== Pipeline Completed Successfully ===

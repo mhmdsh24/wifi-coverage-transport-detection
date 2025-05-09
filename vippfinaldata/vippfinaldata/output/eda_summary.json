@@ -1,0 +1,18 @@
+{
+    "total_wifi_records": 50000,
+    "unique_bssids": 66,
+    "hidden_ssids_count": 0,
+    "hidden_ssids_percentage": 0.0,
+    "rssi_min_wifi": -89.0,
+    "rssi_max_wifi": -55.0,
+    "rssi_mean_wifi": -73.2631,
+    "total_location_records": 7512,
+    "total_gps_records": 1109,
+    "total_grid_cells": 5127,
+    "grid_cell_size_meters": 10,
+    "rssi_mean": -73.04486054222743,
+    "rssi_min": -89.0,
+    "rssi_max": -55.0,
+    "anomaly_count": 2499,
+    "anomaly_percentage": 4.997999999999999
+}

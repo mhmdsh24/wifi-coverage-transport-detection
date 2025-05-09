@@ -1,0 +1,15 @@
+RSSI Threshold Recommendations
+=============================
+
+Analysis: all_data
+------------------
+  10pct_coverage:
+    threshold: -85
+    coverage_pct: 8.62246081452762
+  25pct_coverage:
+    threshold: -80
+    coverage_pct: 22.96782317659144
+  50pct_coverage:
+    threshold: -77
+    coverage_pct: 48.21221460052358
+

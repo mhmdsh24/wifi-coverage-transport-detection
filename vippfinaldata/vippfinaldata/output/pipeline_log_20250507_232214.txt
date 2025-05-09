@@ -1,0 +1,21 @@
+2025-05-07 23:22:14 - Starting integrated WiFi/cellular coverage prediction pipeline
+2025-05-07 23:22:14 - Parameters: rssi_threshold=-75.0, nrows=all
+2025-05-07 23:22:14 - 
+=== STEP 1: Loading Preprocessed Data ===
+2025-05-07 23:22:14 - Checking for required columns and adding if missing...
+2025-05-07 23:22:14 - Added timestamp_dt column
+2025-05-07 23:22:15 - Loaded preprocessed data: 50000 WiFi records, 7512 location records
+2025-05-07 23:22:15 - 
+=== STEP 2: Signal Anomaly Detection ===
+2025-05-07 23:22:22 - Detected and saved 2499 signal anomalies
+2025-05-07 23:22:23 - Anomaly detection completed in 8.28 seconds
+2025-05-07 23:22:23 - 
+=== STEP 3: Coverage Prediction Modeling ===
+2025-05-07 23:22:23 - Training coverage prediction models...
+2025-05-07 23:22:23 - Model training completed. Full output saved to C:\Users\User\Desktop\vippfinaldata\output/model_training_output.txt
+2025-05-07 23:22:23 - 
+=== STEP 4: Coverage Prediction and Visualization ===
+2025-05-07 23:22:23 - Error during coverage prediction: Can only use .dt accessor with datetimelike values
+2025-05-07 23:22:23 - 
+Total pipeline execution time: 9.01 seconds (0.15 minutes)
+2025-05-07 23:22:23 - Integrated WiFi/cellular coverage prediction pipeline completed

@@ -1,0 +1,11 @@
+rssi_mean
+rssi_std
+rssi_min
+rssi_max
+rssi_count
+rssi_change_mean
+rssi_change_std
+rssi_rolling_std_mean
+hourly_variation
+dist_to_low_coverage
+anomaly_density

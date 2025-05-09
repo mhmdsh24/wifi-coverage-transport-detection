@@ -1,0 +1,5 @@
+2025-05-04 19:24:14 - Starting integrated WiFi/cellular coverage prediction pipeline
+2025-05-04 19:24:14 - Parameters: rssi_threshold=-75.0, nrows=all
+2025-05-04 19:24:14 - 
+=== STEP 1: Loading Preprocessed Data ===
+2025-05-04 19:24:14 - Merging data and computing grid statistics...

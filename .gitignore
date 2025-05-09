@@ -7,28 +7,12 @@
 !requirements.txt
 !feature_list.txt
 
-# Generated output directories
-**/output/
-**/output_final/
-**/output_improved/
-**/output_window/
 
-# Generated plot directories
-**/plots/
-**/plots_final/
-**/plots_improved/
-**/plots_window/
-**/plots_fixed/
 
-# Model files
-**/models/
-**/models_final/
-**/models_improved/
-**/models_window/
 
-# Media and generated content
-**/media/
-**/staticfiles/
+
+
+
 
 # Database
 *.sqlite3

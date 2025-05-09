@@ -1,0 +1,14 @@
+{
+  "random_forest": {
+    "accuracy": 0.704,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0
+  },
+  "gradient_boosting": {
+    "accuracy": 0.714,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0
+  }
+}
