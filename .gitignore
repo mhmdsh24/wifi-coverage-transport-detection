@@ -1,15 +1,10 @@
 # Large datasets
 *.csv
-*.dat
-*.pkl
+
 
 # Exceptions - include small, important CSV files
 !requirements.txt
 !feature_list.txt
-
-
-
-
 
 
 
