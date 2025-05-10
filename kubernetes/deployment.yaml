@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wifi-coverage-analysis
+  labels:
+    app: wifi-coverage-analysis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wifi-coverage-analysis
+  template:
+    metadata:
+      labels:
+        app: wifi-coverage-analysis
+    spec:
+      containers:
+      - name: wifi-coverage-analysis
+        image: ${ACR_NAME}.azurecr.io/wifi-coverage-analysis:latest
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+        env:
+        - name: DEBUG
+          value: "0"
+        - name: DJANGO_SETTINGS_MODULE
+          value: "coverage_viz.settings"
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+        - name: plots-volume
+          mountPath: /app/plots
+        - name: models-volume
+          mountPath: /app/models
+        - name: output-volume
+          mountPath: /app/output
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: data-pvc
+      - name: plots-volume
+        persistentVolumeClaim:
+          claimName: plots-pvc
+      - name: models-volume
+        persistentVolumeClaim:
+          claimName: models-pvc
+      - name: output-volume
+        persistentVolumeClaim:
+          claimName: output-pvc 
